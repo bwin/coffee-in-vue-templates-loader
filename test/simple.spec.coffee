@@ -9,6 +9,13 @@ simpleTest = (title, { input, expected }) -> it title, ->
 	.to.equal expected
 	return
 
+# expected errors tests
+
+it 'Should throw when providing a non-string html argument', ->
+	expect -> loader null
+	.to.throw()
+	return
+
 # basic tests
 
 simpleTest 'Text interpolation should work',
@@ -41,29 +48,24 @@ simpleTest 'Attribute interpolation should work with v-for',
 		</template>
 	"""
 
-# coverage completeness tests
-
-simpleTest 'skip empty html',
-	input: ""
-	expected: ""
-
-simpleTest 'skip empty attributes',
-	input: """<template><div :x=""></div></template>"""
-	expected: """<template><div :x></div></template>"""
-
-simpleTest 'unwrap object literals',
-	input: """<template><div :x="a: 1, b: 2"></div></template>"""
-	expected: """<template><div :x="{ a: 1, b: 2 }"></div></template>"""
-
-simpleTest 'skip unrecognized v-for format',
-	input: """<template><div v-for="a b c"></div></template>"""
-	expected: """<template><div v-for="a b c"></div></template>"""
-
-simpleTest "skip everything that's not inside the <template> tag",
+simpleTest "Skip everything that's not inside the <template> tag",
 	input: '<template>An {{ "something-#{val}" }} info</template><script :x="fn 3">{{fn 9}}</script>'
 	expected: """<template>An {{ "something-".concat(val) }} info</template><script :x="fn 3">{{fn 9}}</script>"""
 
-it 'should throw when providing a non-string html argument', ->
-	expect -> loader null
-	.to.throw()
-	return
+# coverage completeness tests
+
+simpleTest 'Skip empty html',
+	input: ""
+	expected: ""
+
+simpleTest 'Skip empty attributes',
+	input: """<template><div :x=""></div></template>"""
+	expected: """<template><div :x></div></template>"""
+
+simpleTest 'Skip unrecognized v-for format',
+	input: """<template><div v-for="a b c"></div></template>"""
+	expected: """<template><div v-for="a b c"></div></template>"""
+
+simpleTest 'Unwrap object literals',
+	input: """<template><div :x="a: 1, b: 2"></div></template>"""
+	expected: """<template><div :x="{ a: 1, b: 2 }"></div></template>"""
