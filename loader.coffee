@@ -64,12 +64,7 @@ module.exports = (html) ->
 	# because the outer node somehow gets lost in `.html()`
 	$ = cheerio "<div>#{html}</div>"
 
-	#try walkNodes $
-	#catch err
-	#	#console.error "[coffee-in-vue-templates-loader] ERROR:", err
-	#	return err
-	
-	walkNodes $
+	walkNodes $.find '> template'
 
 	result = replaceEntities $.html()
 
