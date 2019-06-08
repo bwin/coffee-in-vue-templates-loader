@@ -1,9 +1,7 @@
 
-# coffee-in-vue-templates-loader
+# coffee-in-vue-templates-loader [CIVTL]
 
-| Use coffeescript in vue templates as attributes or interpolations.
-
-This is a webpack-loader.
+| Webpack-loader to use coffeescript in vue templates as attributes or interpolations.
 
 Example usage:
 ```vue

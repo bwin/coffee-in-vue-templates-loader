@@ -1,7 +1,7 @@
 {
   "name": "coffee-in-vue-templates-loader",
   "version": "0.0.1",
-  "description": "Use coffeescript in vue templates as attributes or interpolations.",
+  "description": "Webpack-loader to use coffeescript in vue templates as attributes or interpolations.",
   "main": "index.js",
   "scripts": {
     "test": "yarn mocha test/**/*.spec.coffee",
@@ -21,6 +21,7 @@
     "mocha": "^6.1.4",
     "nyc": "^14.1.1"
   },
+  "files": ["src/"],
   "mocha": {
     "extension": [
       "coffee"

@@ -2,7 +2,7 @@
 # see https://www.chaijs.com/api/bdd/
 { expect } = require 'chai'
 
-loader = require '../loader'
+loader = require '../src/loader'
 
 simpleTest = (title, { input, expected }) -> it title, ->
 	expect loader input
