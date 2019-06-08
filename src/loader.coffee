@@ -2,9 +2,12 @@
 cheerio = require 'cheerio'
 coffee = require 'coffeescript'
 
+# which attributes we want to transpile
 reAttrTest = /^(v-|@|:)/
-reTextInterpolationMatch = /{{.*?}}/g
+# match v-for expressions
 reForMatch = /(.*?)\sin\s(.*)/
+# match interpolations
+reTextInterpolationMatch = /{{.*?}}/g
 
 # replace entities encoded by cheerio
 replaceEntities = (str) ->
@@ -13,20 +16,20 @@ replaceEntities = (str) ->
 	.replace /&quot;/g, '"'
 	.replace /&amp;/g, '&'
 
-compile = (js) ->
-	js = replaceEntities js
+compile = (cof) ->
+	cof = replaceEntities cof
 	
 	# compile, then remove newlines and semicolon at the end
-	cof = coffee
-		.compile js, bare: yes
+	js = coffee
+		.compile cof, bare: yes
 		.replace /\n\s*/g, ' '
 		.replace /;\s*$/, ''
 		.replace /^"use strict"; /, ''
 
 	# unwrap object literals
-	if cof.startsWith('({') and cof.endsWith('})')
-		cof = cof.substring 1, cof.length-1
-	return cof
+	if js.startsWith('({') and js.endsWith('})')
+		js = js.substring 1, js.length-1
+	return js
 
 walkNodes = (nodes) ->
 	for node in nodes
@@ -39,21 +42,21 @@ walkNodes = (nodes) ->
 					if key is 'v-for'
 						matches = val.match reForMatch
 						continue unless matches?[1]
-						[_, what, js] = matches
-						cof = compile js
-						node.attribs[key] = "#{what} in #{cof}"
+						[_, alias, cof] = matches
+						js = compile cof
+						node.attribs[key] = "#{alias} in #{js}"
 					else if reAttrTest.test key
-						cof = compile val
-						node.attribs[key] = cof
+						js = compile val
+						node.attribs[key] = js
 			when 'text'
 				# transpile interpolations
 				text = node.data
 				matches = text.match reTextInterpolationMatch
 				continue unless matches
 				for interpolation in matches
-					js = interpolation.substring 2, interpolation.length-2
-					cof = compile js
-					text = text.replace interpolation, "{{ #{cof} }}"
+					cof = interpolation.substring 2, interpolation.length-2
+					js = compile cof
+					text = text.replace interpolation, "{{ #{js} }}"
 				node.data = text
 	return
 
