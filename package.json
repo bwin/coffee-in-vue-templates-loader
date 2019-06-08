@@ -1,15 +1,19 @@
 {
   "name": "coffee-in-vue-templates-loader",
   "version": "0.0.2-dev",
+  "license": "MIT",
   "description": "Webpack-loader to use coffeescript in vue templates as attributes or interpolations.",
+  "author": "Benjamin Winkler [bwin]",
+  "repository": "github:bwin/coffee-in-vue-templates-loader",
+  "bugs": {
+  	"url": "https://github.com/bwin/coffee-in-vue-templates-loader/issues"
+  },
   "main": "index.js",
   "scripts": {
     "test": "yarn mocha test/**/*.spec.coffee",
     "test:watch": "yarn test --reporter min --watch",
     "test:coverage": "yarn nyc yarn test"
   },
-  "author": "Benjamin Winkler [bwin]",
-  "license": "MIT",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
     "coffeescript": "^2.4.1"
