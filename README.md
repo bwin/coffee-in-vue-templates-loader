@@ -3,6 +3,11 @@
 
 | Webpack-loader to use coffeescript in vue templates as attributes or interpolations.
 
+Install with:
+```sh
+yarn add --dev coffee-in-vue-templates-loader
+```
+
 Example usage:
 ```vue
 <template lang="pug">
