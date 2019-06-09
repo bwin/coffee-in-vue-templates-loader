@@ -38,14 +38,13 @@ walkNodes = (nodes, cb) ->
 	return
 
 compileAttributes = (node) ->
-	for key, val of node.attribs
-		continue unless val
+	for key, val of node.attribs when val
 		if key is 'v-for'
 			matches = val.match reForMatch
-			continue unless matches
-			[_, alias, cof] = matches
-			js = compile cof
-			node.attribs[key] = "#{alias} in #{js}"
+			if matches
+				[_, alias, cof] = matches
+				js = compile cof
+				node.attribs[key] = "#{alias} in #{js}"
 		else if reAttrTest.test key
 			js = compile val
 			node.attribs[key] = js
@@ -79,6 +78,6 @@ compile = (cof) ->
 
 replaceEntities = (str) ->
 	return str
-	.replace /&apos;/g, "'"
-	.replace /&quot;/g, '"'
-	.replace /&amp;/g, '&'
+		.replace /&apos;/g, "'"
+		.replace /&quot;/g, '"'
+		.replace /&amp;/g, '&'
