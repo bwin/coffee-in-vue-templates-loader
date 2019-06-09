@@ -6,7 +6,7 @@
   "author": "Benjamin Winkler [bwin]",
   "repository": "github:bwin/coffee-in-vue-templates-loader",
   "bugs": {
-  	"url": "https://github.com/bwin/coffee-in-vue-templates-loader/issues"
+    "url": "https://github.com/bwin/coffee-in-vue-templates-loader/issues"
   },
   "main": "index.js",
   "scripts": {
@@ -15,8 +15,8 @@
     "test:coverage": "yarn nyc yarn test"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.3",
-    "coffeescript": "^2.4.1"
+    "coffeescript": "^2.4.1",
+    "jsdom": "^15.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",

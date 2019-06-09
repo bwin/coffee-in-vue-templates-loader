@@ -60,7 +60,7 @@ simpleTest 'Skip empty html',
 
 simpleTest 'Skip empty attributes',
 	input: """<template><div :x=""></div></template>"""
-	expected: """<template><div :x></div></template>"""
+	expected: """<template><div :x=""></div></template>"""
 
 simpleTest 'Skip unrecognized v-for format',
 	input: """<template><div v-for="a b c"></div></template>"""

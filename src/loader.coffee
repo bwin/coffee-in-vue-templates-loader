@@ -1,6 +1,6 @@
 
 coffee = require 'coffeescript'
-cheerio = require 'cheerio'
+{ JSDOM } = require 'jsdom'
 
 # which attributes we want to transpile
 reAttrTest = /^(v-|@|:)/
@@ -14,51 +14,63 @@ reTextInterpolationMatch = /{{.*?}}/g
 module.exports = coffeeInVueTemplatesLoader = (html) ->
 	throw new Error 'html has to be a string' unless typeof html is 'string'
 
-	# add an extra wrapper div,
-	# because the outermost node somehow gets lost in `.html()`
-	$ = cheerio "<div>#{html}</div>"
+	# rename the <template> tag, so it's not treated as a html5 template
+	html = html.replace /template>/g, 'template__vue>'
 
 	# transpile code inside <template> tag
-	template = $.find '> template'
-	walkNodes template, (node) ->
-		switch node.type
-			when 'tag' then compileAttributes node
-			when 'text' then compileInterpolations node
+	dom = new JSDOM "<html><body>#{html}</body></html>"
+	{ body } = dom.window.document
+	
+	templateNode = body.querySelector 'template__vue'
+
+	return '' unless templateNode
+	walkNodes templateNode.childNodes, (node) ->
+		switch node.nodeType
+			# nodeType 1 = tag
+			when 1 then compileAttributes node
+			# nodeType 3 = text
+			when 3 then compileInterpolations node
 		return
 
-	# replace entities encoded by cheerio
-	result = replaceEntities $.html()
+	result = body.innerHTML
+	# rename back to template, after we're done
+	result = result.replace /template__vue>/g, 'template>'
+	# replace entities encoded by jsdom
+	result = replaceEntities result
 
 	return result
 
 walkNodes = (nodes, cb) ->
 	for node in nodes
 		cb node
-		walkNodes node.children, cb if node.children?.length > 0
+		walkNodes node.childNodes, cb if node.hasChildNodes()
 	return
 
 compileAttributes = (node) ->
-	for key, val of node.attribs when val
+	for i in [0...node.attributes.length]
+		attr = node.attributes[i]
+		key = attr.nodeName
+		val = attr.value
 		if key is 'v-for'
 			matches = val.match reForMatch
 			if matches
 				[_, alias, cof] = matches
 				js = compile cof
-				node.attribs[key] = "#{alias} in #{js}"
+				attr.value = "#{alias} in #{js}"
 		else if reAttrTest.test key
 			js = compile val
-			node.attribs[key] = js
+			attr.value = js
 	return
 
 compileInterpolations = (node) ->
-	text = node.data
+	text = node.textContent
 	matches = text.match reTextInterpolationMatch
 	if matches
 		for interpolation in matches
 			cof = interpolation.substring 2, interpolation.length-2
 			js = compile cof
 			text = text.replace interpolation, "{{ #{js} }}"
-		node.data = text
+		node.textContent = text
 	return
 
 compile = (cof) ->
@@ -69,7 +81,7 @@ compile = (cof) ->
 		.compile cof, bare: yes
 		.replace /\n\s*/g, ' '
 		.replace /;\s*$/, ''
-		.replace /^"use strict"; /, ''
+		.replace /^"use strict"(; )?/, ''
 
 	# unwrap object literals
 	js = js.substring 1, js.length-1 if js.startsWith('({') and js.endsWith('})')
