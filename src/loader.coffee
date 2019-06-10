@@ -18,9 +18,8 @@ module.exports = coffeeInVueTemplatesLoader = (html) ->
 	# because the outermost node somehow gets lost in `.html()`
 	$ = cheerio "<div>#{html}</div>"
 
-	# transpile code inside <template> tag
-	template = $.find '> template'
-	walkNodes template, (node) ->
+	# transpile code
+	walkNodes $, (node) ->
 		switch node.type
 			when 'tag' then compileAttributes node
 			when 'text' then compileInterpolations node
