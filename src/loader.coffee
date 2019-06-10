@@ -14,17 +14,11 @@ reTextInterpolationMatch = /{{.*?}}/g
 module.exports = coffeeInVueTemplatesLoader = (html) ->
 	throw new Error 'html has to be a string' unless typeof html is 'string'
 
-	# rename the <template> tag, so it's not treated as a html5 template
-	html = html.replace /template>/g, 'template__vue>'
-
-	# transpile code inside <template> tag
 	dom = new JSDOM "<html><body>#{html}</body></html>"
 	{ body } = dom.window.document
 	
-	templateNode = body.querySelector 'template__vue'
-
-	return '' unless templateNode
-	walkNodes templateNode.childNodes, (node) ->
+	return '' unless body
+	walkNodes body.childNodes, (node) ->
 		switch node.nodeType
 			# nodeType 1 = tag
 			when 1 then compileAttributes node
@@ -32,11 +26,8 @@ module.exports = coffeeInVueTemplatesLoader = (html) ->
 			when 3 then compileInterpolations node
 		return
 
-	result = body.innerHTML
-	# rename back to template, after we're done
-	result = result.replace /template__vue>/g, 'template>'
 	# replace entities encoded by jsdom
-	result = replaceEntities result
+	result = replaceEntities body.innerHTML
 
 	return result
 
