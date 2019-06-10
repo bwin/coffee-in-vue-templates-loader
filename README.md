@@ -6,7 +6,7 @@
 - [Installation](#installation)
 - [Example usage](#example-usage)
 - [Webpack configuration](#webpack-configuration)
-  - [Nuxt](#nuxt)
+  - [With nuxt](#with-nuxt)
 
 ## Installation
 
