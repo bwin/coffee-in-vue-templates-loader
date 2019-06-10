@@ -1,6 +1,6 @@
 {
   "name": "coffee-in-vue-templates-loader",
-  "version": "0.0.3",
+  "version": "0.0.4-dev",
   "license": "MIT",
   "description": "Webpack-loader to use coffeescript in vue templates as attributes or interpolations.",
   "author": "Benjamin Winkler [bwin]",
