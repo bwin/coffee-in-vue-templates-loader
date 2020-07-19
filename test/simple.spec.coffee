@@ -48,6 +48,14 @@ simpleTest 'Unwrap object literals',
 	input: """<div :x="a: 1, b: 2"></div>"""
 	expected: """<div :x="{ a: 1, b: 2 }"></div>"""
 
+simpleTest 'if-then to ternary op (in attr)',
+	input: """<div :x="if a is 1 then 2 else 3"></div>"""
+	expected: """<div :x="a === 1 ? 2 : 3"></div>"""
+
+simpleTest 'if-then to ternary op (in text interpolation)',
+	input: """<div>{{ if a is 1 then 2 else 3 }}</div>"""
+	expected: """<div>{{ a === 1 ? 2 : 3 }}</div>"""
+
 # coverage completeness tests
 
 simpleTest 'Skip empty html',

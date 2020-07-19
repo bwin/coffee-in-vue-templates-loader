@@ -63,12 +63,19 @@ compileInterpolations = (node) ->
 compile = (cof) ->
 	cof = replaceEntities cof
 	
+	# assign expression to var to get ternary op working
+	tmpVarName = '__x__'
+	cof = "#{tmpVarName} = #{cof}"
+	
 	# compile, then remove newlines, semicolon at the end and "use strict"
 	js = coffee
 		.compile cof, bare: yes
 		.replace /\n\s*/g, ' '
 		.replace /;\s*$/, ''
 		.replace /^"use strict"; /, ''
+
+	# remove assignment to var again
+	js = js.substring "var #{tmpVarName}; #{tmpVarName} = ".length
 
 	# unwrap object literals
 	js = js.substring 1, js.length-1 if js.startsWith('({') and js.endsWith('})')
